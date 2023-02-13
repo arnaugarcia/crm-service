@@ -14,9 +14,12 @@
 	<packaging>war</packaging>
 	<name>crm-service</name>
 	<description>REST API to manage customer data for a small shop.</description>
+
 	<properties>
 		<java.version>17</java.version>
+		<validation-api.version>2.0.1.Final</validation-api.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -26,7 +29,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${validation-api.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
