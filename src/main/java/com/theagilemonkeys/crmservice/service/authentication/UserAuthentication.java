@@ -22,7 +22,7 @@ public class UserAuthentication implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findOneByEmail(email)
+        User user = userRepository.findOneByEmailWithAuthorities(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         LOGGER.info("Found user with email: {} has been authorized to access", user.email());
         return builder()
