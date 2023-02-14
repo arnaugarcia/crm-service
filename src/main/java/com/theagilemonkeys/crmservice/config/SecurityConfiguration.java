@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.ADMIN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -26,10 +27,11 @@ public class SecurityConfiguration {
         http.cors().disable()// disable CORS (Cross-Origin Resource Sharing)
                 .csrf(CsrfConfigurer::disable) // disable CSRF (Cross-Site Request Forgery)
                 .sessionManagement()
-                    .sessionCreationPolicy(STATELESS) // no session (JSESSION cookie) will be created or used by spring security
+                .sessionCreationPolicy(STATELESS) // no session (JSESSION cookie) will be created or used by spring security
                 .and()
-                    .authorizeRequests(auth -> auth.requestMatchers("/api/**").authenticated()) // all other requests require authentication
-                    .httpBasic();
+                .authorizeRequests(auth -> auth.requestMatchers("/api/users/**").hasAuthority(ADMIN)) // Deny access to users endpoints for non-admin users
+                .authorizeRequests(auth -> auth.requestMatchers("/api/**").authenticated()) // all other requests require authentication
+                .httpBasic();
         return http.build();
     }
 
