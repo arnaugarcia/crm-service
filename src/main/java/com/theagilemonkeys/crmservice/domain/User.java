@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
-import static org.hibernate.annotations.CacheConcurrencyStrategy.NONSTRICT_READ_WRITE;
 
 @Entity
 @Table(name = "user")
@@ -27,11 +26,11 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private Long id;
 
     @Size(max = 50)
-    @Column(name = "first_name", length = 50)
+    @Column(name = "name", length = 50)
     private String name;
 
     @Size(max = 50)
-    @Column(name = "last_name", length = 50)
+    @Column(name = "surname", length = 50)
     private String surname;
 
     @JsonIgnore
@@ -49,15 +48,12 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(name = "image_url", length = 256)
     private String imageUrl;
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "user_authority",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")}
     )
-    @org.hibernate.annotations.Cache(usage = NONSTRICT_READ_WRITE)
-    @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
     public Long id() {
@@ -110,6 +106,10 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public Set<Authority> authorities() {
         return authorities;
+    }
+
+    public String[] authoritiesAsArray() {
+        return authorities.stream().map(Authority::name).toArray(String[]::new);
     }
 
     public void setAuthorities(Set<Authority> authorities) {
