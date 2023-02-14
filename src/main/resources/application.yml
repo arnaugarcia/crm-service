@@ -6,3 +6,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+application:
+  default-user:
+    email: admin@localhost
+    password: admin
