@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.BatchSize;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -114,6 +113,10 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public void addAuthority(Authority authority) {
+        this.authorities.add(authority);
     }
 
     @Override
