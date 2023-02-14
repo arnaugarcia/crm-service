@@ -107,12 +107,12 @@ public class User extends AbstractAuditingEntity implements Serializable {
         return authorities;
     }
 
-    public String[] authoritiesAsArray() {
-        return authorities.stream().map(Authority::name).toArray(String[]::new);
-    }
-
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public String[] authoritiesAsArray() {
+        return authorities.stream().map(Authority::name).toArray(String[]::new);
     }
 
     public void addAuthority(Authority authority) {

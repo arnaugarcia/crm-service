@@ -1,4 +1,9 @@
 package com.theagilemonkeys.crmservice.service.user.dto;
 
-public record UserDTO(String email, String password) {
+import lombok.Builder;
+
+import java.io.Serializable;
+
+@Builder
+public record UserDTO(String name, String surname, String email) implements Serializable {
 }
