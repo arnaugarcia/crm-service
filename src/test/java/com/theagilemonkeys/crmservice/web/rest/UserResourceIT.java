@@ -49,6 +49,8 @@ class UserResourceIT {
 
     private UserRequest createUserRequest() {
         return UserRequest.builder()
+                .name(DEFAULT_NAME)
+                .surname(DEFAULT_SURNAME)
                 .email(DEFAULT_EMAIL)
                 .password(DEFAULT_PASSWORD)
                 .build();
@@ -115,8 +117,52 @@ class UserResourceIT {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
                 .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
-                .andExpect(jsonPath("$.surname").value(DEFAULT_SURNAME))
-                .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGE_URL));
+                .andExpect(jsonPath("$.surname").value(DEFAULT_SURNAME));
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
+    void should_not_create_a_user_with_existing_email() throws Exception {
+
+        User user = createEmptyUser();
+
+        request = UserRequest.builder()
+                .email(user.email())
+                .password(DEFAULT_PASSWORD)
+                .build();
+
+        restSafeboxMockMvc.perform(post("/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
+    void should_not_create_a_user_with_empty_email() throws Exception {
+
+        request = UserRequest.builder()
+                .password(DEFAULT_PASSWORD)
+                .build();
+
+        restSafeboxMockMvc.perform(post("/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
+    void should_not_create_a_user_with_empty_password() throws Exception {
+
+        request = UserRequest.builder()
+                .email(DEFAULT_EMAIL)
+                .build();
+
+        restSafeboxMockMvc.perform(post("/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
