@@ -13,6 +13,7 @@ public class UserMapperImpl implements UserMapper {
                 .name(user.name())
                 .surname(user.surname())
                 .email(user.email())
+                .imageUrl(user.imageUrl())
                 .build();
     }
 }
