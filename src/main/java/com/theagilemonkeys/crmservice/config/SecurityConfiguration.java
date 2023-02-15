@@ -30,6 +30,7 @@ public class SecurityConfiguration {
                     .sessionCreationPolicy(STATELESS) // no session (JSESSION cookie) will be created or used by spring security
                 .and()
                     .authorizeRequests(auth -> auth.requestMatchers("/users").hasAuthority(ADMIN)) // Deny access to users endpoints for non-admin users
+                    .authorizeRequests(auth -> auth.requestMatchers("/users/**").hasAuthority(ADMIN)) // Deny access to users endpoints for non-admin users
                 .httpBasic();
         return http.build();
     }

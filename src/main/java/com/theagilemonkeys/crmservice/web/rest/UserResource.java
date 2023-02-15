@@ -2,16 +2,14 @@ package com.theagilemonkeys.crmservice.web.rest;
 
 import com.theagilemonkeys.crmservice.service.user.UserService;
 import com.theagilemonkeys.crmservice.service.user.dto.UserDTO;
+import com.theagilemonkeys.crmservice.service.user.request.UpdateUserRequest;
 import com.theagilemonkeys.crmservice.service.user.request.UserRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,6 +41,13 @@ public class UserResource {
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("REST request to create a user : {}", userRequest);
         UserDTO result = userService.create(userRequest);
+        return ResponseEntity.status(CREATED).body(result);
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest userRequest) {
+        log.info("REST request to update a user : {}", userRequest);
+        UserDTO result = userService.update(id, userRequest);
         return ResponseEntity.status(CREATED).body(result);
     }
 

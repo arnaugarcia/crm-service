@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.ADMIN;
+import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.SUPER_ADMIN;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -109,6 +111,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public boolean isSuperAdmin() {
+        return authorities.stream().anyMatch(authority -> authority.name().equals(SUPER_ADMIN));
+    }
+
+    public boolean isAdmin() {
+        return authorities.stream().anyMatch(authority -> authority.name().equals(ADMIN));
     }
 
     public String[] authoritiesAsArray() {
