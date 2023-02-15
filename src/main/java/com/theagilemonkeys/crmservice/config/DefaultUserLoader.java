@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.ADMIN;
-import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.USER;
+import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.*;
 import static java.util.Arrays.stream;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -40,7 +39,7 @@ public class DefaultUserLoader {
         User user = new User();
         user.setEmail(defaultUserProperties.email());
         user.setPassword(passwordEncoder.encode(defaultUserProperties.password()));
-        user.setCreatedBy("system");
+        user.setCreatedBy(DEFAULT_USER);
 
         authorityRepository.findById(ADMIN).ifPresent(user::addAuthority);
         authorityRepository.findById(USER).ifPresent(user::addAuthority);
