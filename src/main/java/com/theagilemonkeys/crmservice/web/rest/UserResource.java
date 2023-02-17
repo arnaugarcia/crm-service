@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @AllArgsConstructor
@@ -41,14 +42,20 @@ public class UserResource {
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("REST request to create a user : {}", userRequest);
         UserDTO result = userService.create(userRequest);
-        return ResponseEntity.status(CREATED).body(result);
+        return status(CREATED).body(result);
     }
 
+    /**
+     * PUT  /users : Updates an existing user.
+     * @param id the id of the user to update
+     * @param userRequest the request to update the user
+     * @return the ResponseEntity with status 201 (Created) and with body the updated user
+     */
     @PutMapping("/users/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest userRequest) {
         log.info("REST request to update a user : {}", userRequest);
         UserDTO result = userService.update(id, userRequest);
-        return ResponseEntity.status(CREATED).body(result);
+        return status(CREATED).body(result);
     }
 
 }
