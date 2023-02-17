@@ -2,6 +2,7 @@ package com.theagilemonkeys.crmservice.web.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theagilemonkeys.crmservice.IntegrationTest;
+import com.theagilemonkeys.crmservice.domain.Authority;
 import com.theagilemonkeys.crmservice.domain.User;
 import com.theagilemonkeys.crmservice.repository.UserRepository;
 import com.theagilemonkeys.crmservice.service.user.request.UpdateUserRequest;
@@ -16,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.DEFAULT_USER;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -136,7 +137,9 @@ class UserResourceIT {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
                 .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
-                .andExpect(jsonPath("$.surname").value(DEFAULT_SURNAME));
+                .andExpect(jsonPath("$.surname").value(DEFAULT_SURNAME))
+                .andExpect(jsonPath("$.roles").isArray())
+                .andExpect(jsonPath("$.roles.length()").value(1));
 
         List<User> users = userRepository.findAll();
         assertThat(users).hasSize(databaseSizeBeforeCreate + 1);
@@ -269,5 +272,36 @@ class UserResourceIT {
         restUserMockMvc.perform(delete("/users/{id}", 0)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL)
+    void should_not_delete_an_admin_as_user() throws Exception {
+        User user = createEmptyUser();
+        user.authorities().add(new Authority(ADMIN));
+        userRepository.save(user);
+
+        restUserMockMvc.perform(delete("/users/{id}", user.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL)
+    void should_not_delete_an_super_admin_as_user() throws Exception {
+        User user = createEmptyUser();
+        user.authorities().add(new Authority(ADMIN));
+        user.authorities().add(new Authority(SUPER_ADMIN));
+        userRepository.save(user);
+
+        restUserMockMvc.perform(delete("/users/{id}", user.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
+    void should_toggle_a_user_to_admin() throws Exception {
+        User user = createEmptyUser();
     }
 }
