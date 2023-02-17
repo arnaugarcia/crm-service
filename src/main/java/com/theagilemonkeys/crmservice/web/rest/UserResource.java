@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.ResponseEntity.status;
+import static org.springframework.http.ResponseEntity.*;
 
 @RestController
 @AllArgsConstructor
@@ -30,7 +30,7 @@ public class UserResource {
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
         log.info("REST request to get all Users");
-        return ResponseEntity.ok(userService.findAll(pageable));
+        return ok(userService.findAll(pageable));
     }
 
     /**
@@ -56,6 +56,18 @@ public class UserResource {
         log.info("REST request to update a user : {}", userRequest);
         UserDTO result = userService.update(id, userRequest);
         return status(CREATED).body(result);
+    }
+
+    /**
+     * DELETE  /users/:id : delete the "id" user.
+     * @param id the id of the user to delete
+     * @return the ResponseEntity with status 204 (NO_CONTENT)
+     */
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        log.info("REST request to delete a user : {}", id);
+        userService.delete(id);
+        return noContent().build();
     }
 
 }

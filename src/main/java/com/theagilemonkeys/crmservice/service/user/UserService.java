@@ -25,4 +25,10 @@ public interface UserService {
     UserDTO update(Long id, UpdateUserRequest userRequest);
 
     List<UserDTO> findAll(Pageable pageable);
+
+    /**
+     * Delete the user with the given id
+     * @param id the id of the user to delete
+     */
+    void delete(Long id);
 }

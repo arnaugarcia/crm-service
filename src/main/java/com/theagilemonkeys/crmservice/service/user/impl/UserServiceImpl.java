@@ -76,6 +76,16 @@ public class UserServiceImpl implements UserService {
                 .collect(toList());
     }
 
+    @Override
+    public void delete(Long id) {
+        User user = userRepository.findById(id).orElseThrow(UserNotFound::new);
+        if (user.isSuperAdmin()) {
+            throw new ImmutableUser();
+        }
+
+        userRepository.delete(user);
+    }
+
     private static Consumer<User> userAlreadyExistsException() {
         return user -> {
             throw new UserAlreadyExists();
