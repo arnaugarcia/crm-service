@@ -2,6 +2,7 @@ package com.theagilemonkeys.crmservice.web.rest.errors;
 
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
+import com.theagilemonkeys.crmservice.service.user.execption.UserNotFound;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,8 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * Controller advice to translate the server side exceptions to client-friendly json structures.
@@ -46,6 +46,20 @@ public class ExceptionTranslator {
                 .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, FORBIDDEN);
+    }
+
+    /**
+     * Handle UserNotFound exception and return a 404 Not Found
+     * @param ex the exception to handle
+     * @return the 404 Not Found response
+     */
+    @ExceptionHandler(UserNotFound.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFound ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(NOT_FOUND.value())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, NOT_FOUND);
     }
 
     /**

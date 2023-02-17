@@ -236,4 +236,38 @@ class UserResourceIT {
                         .content(mapper.writeValueAsBytes(request)))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
+    void should_delete_a_user() throws Exception {
+        User user = createEmptyUser();
+
+        int databaseSizeBeforeDelete = userRepository.findAll().size();
+
+        restUserMockMvc.perform(delete("/users/{id}", user.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        List<User> users = userRepository.findAll();
+        assertThat(users).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL)
+    void should_not_delete_a_user_as_user() throws Exception {
+        User user = createEmptyUser();
+
+        restUserMockMvc.perform(delete("/users/{id}", user.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
+    void should_not_delete_that_not_exists() throws Exception {
+
+        restUserMockMvc.perform(delete("/users/{id}", 0)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 }
