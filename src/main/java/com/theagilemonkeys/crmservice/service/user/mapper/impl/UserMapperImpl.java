@@ -14,6 +14,7 @@ public class UserMapperImpl implements UserMapper {
                 .surname(user.surname())
                 .email(user.email())
                 .imageUrl(user.imageUrl())
+                .roles(user.authoritiesAsArray())
                 .build();
     }
 }
