@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.*;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.*;
 import static java.util.Arrays.stream;
 import static org.slf4j.LoggerFactory.getLogger;
 

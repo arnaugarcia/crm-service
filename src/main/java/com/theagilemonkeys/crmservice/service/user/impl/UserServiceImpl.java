@@ -3,6 +3,7 @@ package com.theagilemonkeys.crmservice.service.user.impl;
 import com.theagilemonkeys.crmservice.domain.User;
 import com.theagilemonkeys.crmservice.repository.AuthorityRepository;
 import com.theagilemonkeys.crmservice.repository.UserRepository;
+import com.theagilemonkeys.crmservice.security.SecurityUtils;
 import com.theagilemonkeys.crmservice.service.user.UserService;
 import com.theagilemonkeys.crmservice.service.user.dto.UserDTO;
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
@@ -13,16 +14,14 @@ import com.theagilemonkeys.crmservice.service.user.request.UpdateUserRequest;
 import com.theagilemonkeys.crmservice.service.user.request.UserRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.DEFAULT_USER;
-import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.USER;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.DEFAULT_USER;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.USER;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -60,12 +59,7 @@ public class UserServiceImpl implements UserService {
         user.setSurname(userRequest.surname());
         user.setImageUrl(userRequest.imageUrl());
 
-        /**
-         * TODO: This is not the best way to get the current user, extract this
-         */
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-        user.setCreatedBy(principal.getUsername());
+        user.setCreatedBy(SecurityUtils.getCurrentUserEmail());
 
         return saveAndTransformToDTO(user);
     }

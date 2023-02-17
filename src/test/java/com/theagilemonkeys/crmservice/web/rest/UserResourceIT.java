@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.theagilemonkeys.crmservice.config.AuthoritiesConstants.DEFAULT_USER;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.DEFAULT_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -64,6 +64,7 @@ class UserResourceIT {
                 .password(DEFAULT_PASSWORD)
                 .build();
     }
+
     private UpdateUserRequest updateUserRequest() {
         return UpdateUserRequest.builder()
                 .name(UPDATED_NAME)
