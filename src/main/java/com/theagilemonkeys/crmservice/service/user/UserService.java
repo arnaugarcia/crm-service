@@ -31,4 +31,11 @@ public interface UserService {
      * @param id the id of the user to delete
      */
     void delete(Long id);
+
+    /**
+     * Toggle the admin status of the user with the given id
+     * @param id the id of the user to toggle the admin status
+     * @return the updated user
+     */
+    UserDTO toggleAdmin(Long id);
 }

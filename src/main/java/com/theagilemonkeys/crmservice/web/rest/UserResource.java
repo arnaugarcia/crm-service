@@ -25,6 +25,7 @@ public class UserResource {
 
     /**
      * GET  /users : get all the users.
+     *
      * @return the ResponseEntity with status 200 (OK) and the list of users in body
      */
     @GetMapping("/users")
@@ -35,6 +36,7 @@ public class UserResource {
 
     /**
      * POST  /users : Create a new user.
+     *
      * @param userRequest the request to create the user
      * @return the ResponseEntity with status 201 (Created) and with body the new user
      */
@@ -47,7 +49,8 @@ public class UserResource {
 
     /**
      * PUT  /users : Updates an existing user.
-     * @param id the id of the user to update
+     *
+     * @param id          the id of the user to update
      * @param userRequest the request to update the user
      * @return the ResponseEntity with status 201 (Created) and with body the updated user
      */
@@ -60,6 +63,7 @@ public class UserResource {
 
     /**
      * DELETE  /users/:id : delete the "id" user.
+     *
      * @param id the id of the user to delete
      * @return the ResponseEntity with status 204 (NO_CONTENT)
      */
@@ -68,6 +72,18 @@ public class UserResource {
         log.info("REST request to delete a user : {}", id);
         userService.delete(id);
         return noContent().build();
+    }
+
+    /**
+     * PUT  /users/:id/admin : toggle the admin status of the user
+     * @param id the id of the user to toggle
+     * @return the ResponseEntity with status 201 (Created) and with body the updated user
+     */
+    @PutMapping("/users/{id}/admin")
+    public ResponseEntity<UserDTO> toggleAdmin(@PathVariable Long id) {
+        log.info("REST request to set a user as admin : {}", id);
+        UserDTO result = userService.toggleAdmin(id);
+        return status(CREATED).body(result);
     }
 
 }

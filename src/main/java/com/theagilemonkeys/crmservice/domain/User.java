@@ -129,6 +129,10 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.authorities.add(authority);
     }
 
+    public void removeAuthority(Authority authority) {
+        this.authorities.remove(authority);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

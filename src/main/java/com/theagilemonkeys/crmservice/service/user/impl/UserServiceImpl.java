@@ -7,6 +7,7 @@ import com.theagilemonkeys.crmservice.security.SecurityUtils;
 import com.theagilemonkeys.crmservice.service.user.UserService;
 import com.theagilemonkeys.crmservice.service.user.dto.UserDTO;
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
+import com.theagilemonkeys.crmservice.service.user.execption.OperationNotAllowed;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
 import com.theagilemonkeys.crmservice.service.user.execption.UserNotFound;
 import com.theagilemonkeys.crmservice.service.user.mapper.UserMapper;
@@ -84,6 +85,23 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.delete(user);
+    }
+
+    @Override
+    public UserDTO toggleAdmin(Long id) {
+        User user = userRepository.findById(id).orElseThrow(UserNotFound::new);
+        User currentUser = userRepository.findOneByEmail(SecurityUtils.getCurrentUserEmail()).orElseThrow(UserNotFound::new);
+        if (!currentUser.isAdmin()) {
+            throw new OperationNotAllowed();
+        }
+
+        if (user.isAdmin()) {
+            user.removeAuthority(authorityRepository.findById(USER).orElseThrow());
+        } else {
+            user.addAuthority(authorityRepository.findById(USER).orElseThrow());
+        }
+
+        return saveAndTransformToDTO(user);
     }
 
     private static Consumer<User> userAlreadyExistsException() {
