@@ -31,7 +31,7 @@ public class DefaultUserLoader {
     }
 
     private void createDefaultAuthorities() {
-        String[] authorities = {USER, ADMIN};
+        String[] authorities = {USER, ADMIN, SUPER_ADMIN};
         stream(authorities).map(Authority::new).forEach(authorityRepository::save);
     }
 
@@ -41,6 +41,7 @@ public class DefaultUserLoader {
         user.setPassword(passwordEncoder.encode(defaultUserProperties.password()));
         user.setCreatedBy(DEFAULT_USER);
 
+        authorityRepository.findById(SUPER_ADMIN).ifPresent(user::addAuthority);
         authorityRepository.findById(ADMIN).ifPresent(user::addAuthority);
         authorityRepository.findById(USER).ifPresent(user::addAuthority);
 
