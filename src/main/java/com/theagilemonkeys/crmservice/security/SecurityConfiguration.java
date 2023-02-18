@@ -1,4 +1,4 @@
-package com.theagilemonkeys.crmservice.config;
+package com.theagilemonkeys.crmservice.security;
 
 import com.theagilemonkeys.crmservice.service.authentication.UserAuthentication;
 import lombok.AllArgsConstructor;
@@ -31,7 +31,10 @@ public class SecurityConfiguration {
                 .and()
                     .authorizeRequests(auth -> auth.requestMatchers("/users").hasAuthority(ADMIN)) // Deny access to users endpoints for non-admin users
                     .authorizeRequests(auth -> auth.requestMatchers("/users/**").hasAuthority(ADMIN)) // Deny access to users endpoints for non-admin users
-                .httpBasic();
+                .httpBasic()
+                .and()
+                    .authorizeRequests()
+                        .anyRequest().authenticated();
         return http.build();
     }
 
