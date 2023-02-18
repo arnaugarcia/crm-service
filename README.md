@@ -23,18 +23,33 @@ You'll have to run a MySQL instance in your local machine or in a docker contain
 docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=crm -e MYSQL_USER=crm -e MYSQL_PASSWORD=crm -p 3306:3306 -d mysql:5.7
 ```
 
+configure the database connection in the `application.yml` file or as environment variables:
+
+```
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/crm?useSSL=false&useUnicode=yes&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: crm
+    password: crm
+```
+
+
 To start your application in the default profile, run:
 
 ```
 ./mvnw install
 ```
 
+And then run the application:
+
 ```
-./mvnw
+./mvnw spring-boot:run
 ```
 
 ## Building for production
 
+To build the final war and optimize the crm application for production, run:
+
 ```
-./mvnw clean compile
+./mvnw clean package
 ```
