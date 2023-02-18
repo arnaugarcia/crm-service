@@ -1,6 +1,7 @@
 package com.theagilemonkeys.crmservice.web.rest.errors;
 
 import com.theagilemonkeys.crmservice.service.customer.exception.CustomerNotFound;
+import com.theagilemonkeys.crmservice.service.storage.execption.ObjectNotFoundException;
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
 import com.theagilemonkeys.crmservice.service.user.execption.OperationNotAllowed;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
@@ -122,6 +123,20 @@ public class ExceptionTranslator {
      */
     @ExceptionHandler(CustomerNotFound.class)
     public ResponseEntity<ErrorResponse> handleCustomerNotFoundException(CustomerNotFound ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(NOT_FOUND.value())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, NOT_FOUND);
+    }
+
+    /**
+     * Handle ObjectNotFoundException exception and return a 404 Not Found
+     * @param ex the exception to handle
+     * @return the 404 Not Found response
+     */
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleObjectNotFoundException(ObjectNotFoundException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(NOT_FOUND.value())
                 .message(ex.getMessage())
