@@ -10,3 +10,6 @@ application:
   default-user:
     email: admin@localhost
     password: admin
+  aws:
+    bucket: crm
+    region: eu-west-1

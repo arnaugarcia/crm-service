@@ -87,7 +87,6 @@ class UserResourceIT {
         user.setName(DEFAULT_NAME);
         user.setSurname(DEFAULT_SURNAME);
         user.setImageUrl(DEFAULT_IMAGE_URL);
-        user.setCreatedBy(DEFAULT_USER);
         user.addAuthority(new Authority(USER));
         return userRepository.save(user);
     }

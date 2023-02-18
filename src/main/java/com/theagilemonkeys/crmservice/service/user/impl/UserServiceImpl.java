@@ -21,7 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.*;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.ADMIN;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.USER;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -43,7 +44,6 @@ public class UserServiceImpl implements UserService {
         user.setSurname(userRequest.surname());
         user.setPassword(passwordEncoder.encode(userRequest.password()));
         user.addAuthority(authorityRepository.findById(USER).orElseThrow());
-        user.setCreatedBy(DEFAULT_USER);
 
         return saveAndTransformToDTO(user);
     }
@@ -58,8 +58,6 @@ public class UserServiceImpl implements UserService {
         user.setName(userRequest.name());
         user.setSurname(userRequest.surname());
         user.setImageUrl(userRequest.imageUrl());
-
-        user.setCreatedBy(SecurityUtils.getCurrentUserEmail());
 
         return saveAndTransformToDTO(user);
     }

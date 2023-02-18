@@ -39,7 +39,6 @@ public class DefaultUserLoader {
         User user = new User();
         user.setEmail(defaultUserProperties.email());
         user.setPassword(passwordEncoder.encode(defaultUserProperties.password()));
-        user.setCreatedBy(DEFAULT_USER);
 
         authorityRepository.findById(SUPER_ADMIN).ifPresent(user::addAuthority);
         authorityRepository.findById(ADMIN).ifPresent(user::addAuthority);
