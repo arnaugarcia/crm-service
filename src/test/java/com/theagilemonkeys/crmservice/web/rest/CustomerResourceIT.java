@@ -24,6 +24,9 @@ class CustomerResourceIT {
     private static final String DEFAULT_SURNAME = "AAAAAAAAAA";
     private static final String UPDATED_SURNAME = "BBBBBBBBBB";
 
+    private static final String DEFAULT_PHOTO_URL = "AAAAAAAAAA";
+    private static final String UPDATED_PHOTO_URL = "BBBBBBBBBB";
+
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -42,6 +45,8 @@ class CustomerResourceIT {
         Customer customer = new Customer();
         customer.setName(DEFAULT_NAME);
         customer.setSurname(DEFAULT_SURNAME);
+        customer.setPhotoUrl(DEFAULT_PHOTO_URL);
+        customer.setCreatedBy("system");
         return customerRepository.save(customer);
     }
 
@@ -52,7 +57,10 @@ class CustomerResourceIT {
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").isEmpty())
+                .andExpect(jsonPath("$.[0].id").value(customer.id()))
+                .andExpect(jsonPath("$.[0].name").value(customer.name()))
+                .andExpect(jsonPath("$.[0].surname").value(customer.surname()))
+                .andExpect(jsonPath("$.[0].photoUrl").value(customer.photoUrl()))
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
@@ -63,7 +71,10 @@ class CustomerResourceIT {
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").isEmpty())
+                .andExpect(jsonPath("$.[0].id").value(customer.id()))
+                .andExpect(jsonPath("$.[0].name").value(customer.name()))
+                .andExpect(jsonPath("$.[0].surname").value(customer.surname()))
+                .andExpect(jsonPath("$.[0].photoUrl").value(customer.photoUrl()))
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
@@ -84,6 +95,7 @@ class CustomerResourceIT {
                 .andExpect(jsonPath("$.[0].id").value(customer.id()))
                 .andExpect(jsonPath("$.[0].name").value(customer.name()))
                 .andExpect(jsonPath("$.[0].surname").value(customer.surname()))
+                .andExpect(jsonPath("$.[0].photoUrl").value(customer.photoUrl()))
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
