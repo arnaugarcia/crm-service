@@ -20,6 +20,7 @@
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<test.mysql.version>1.17.6</test.mysql.version>
 		<aws-java-sdk.version>2.17.46</aws-java-sdk.version>
+		<jib-maven-plugin.version>3.1.1</jib-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -125,6 +126,40 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib-maven-plugin.version}</version>
+				<configuration>
+					<from>
+						<image>openjdk:17-alpine</image>
+					</from>
+					<to>
+						<image>${project.artifactId}:latest</image>
+					</to>
+					<container>
+						<entrypoint>
+							<shell>bash</shell>
+							<option>-c</option>
+							<arg>/entrypoint.sh</arg>
+						</entrypoint>
+						<ports>
+							<port>8080</port>
+						</ports>
+						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+						<user>1000</user>
+					</container>
+					<extraDirectories>
+						<paths>src/main/docker/jib</paths>
+						<permissions>
+							<permission>
+								<file>/entrypoint.sh</file>
+								<mode>755</mode>
+							</permission>
+						</permissions>
+					</extraDirectories>
 				</configuration>
 			</plugin>
 		</plugins>
