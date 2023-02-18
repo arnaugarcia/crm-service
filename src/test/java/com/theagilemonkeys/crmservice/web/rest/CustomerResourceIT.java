@@ -99,4 +99,34 @@ class CustomerResourceIT {
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
+    @Test
+    @WithMockUser
+    void should_return_two_customers() throws Exception {
+        Customer anotherCustomer= createDefaultCustomer();
+
+        restCustomerMockMvc.perform(get("/customers")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(content().contentType(APPLICATION_JSON));
+    }
+
+    @Test
+    @WithMockUser
+    void should_return_customers_with_pagination() throws Exception {
+        Customer anotherCustomer= createDefaultCustomer();
+
+        restCustomerMockMvc.perform(get("/customers?page=0&size=1")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$.[0].id").value(customer.id()))
+                .andExpect(jsonPath("$.[0].name").value(customer.name()))
+                .andExpect(jsonPath("$.[0].surname").value(customer.surname()))
+                .andExpect(jsonPath("$.[0].photoUrl").value(customer.photoUrl()))
+                .andExpect(content().contentType(APPLICATION_JSON));
+    }
+
 }
