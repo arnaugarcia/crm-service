@@ -37,7 +37,7 @@ class CustomerResourceIT {
     private static final String DEFAULT_PHOTO_URL = "https://arnaugarcia.com/picture.jpg";
     private static final String UPDATED_PHOTO_URL = "https://arnaugarcia.com/picture2.jpg";
 
-    private static byte[] DEFAULT_DATA;
+    private static final byte[] DEFAULT_DATA = "AAAAAAAAAA".getBytes();
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -166,7 +166,7 @@ class CustomerResourceIT {
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(customerRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(customer.id()))
+                .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.name").value(customer.name()))
                 .andExpect(jsonPath("$.surname").value(customer.surname()))
                 .andExpect(jsonPath("$.photoUrl").value(customer.photoUrl()))

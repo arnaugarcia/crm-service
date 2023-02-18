@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class CustomerResource {
     }
 
     @PostMapping("/customers")
-    public ResponseEntity<CustomerDTO> createCustomer(@Valid CustomerRequest customerRequest) {
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
         log.info("REST request to create a customer");
         return ResponseEntity.status(CREATED).body(costumerService.createCustomer(customerRequest));
     }
