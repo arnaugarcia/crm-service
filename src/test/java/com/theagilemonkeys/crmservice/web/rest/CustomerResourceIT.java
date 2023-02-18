@@ -265,4 +265,20 @@ class CustomerResourceIT {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    @WithMockUser
+    void should_delete_a_customer() throws Exception {
+        restCustomerMockMvc.perform(delete("/customers/{id}", customer.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void should_not_delete_a_customer_with_invalid_id() throws Exception {
+        restCustomerMockMvc.perform(delete("/customers/{id}", -1)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
 }

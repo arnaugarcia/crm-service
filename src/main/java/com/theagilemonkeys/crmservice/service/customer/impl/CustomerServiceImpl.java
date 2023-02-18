@@ -71,6 +71,13 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.toDTO(customerRepository.save(customer));
     }
 
+    @Override
+    public void deleteCustomer(Long id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFound::new);
+        cloudStorageService.removeObject(customer.photoUrl());
+        customerRepository.delete(customer);
+    }
+
     private String uploadPhotoAndGetUrlFor(CustomerRequest customerRequest) {
         UploadObjectRequest uploadObjectRequest = UploadObjectRequest.builder()
                 .data(customerRequest.photo().data())

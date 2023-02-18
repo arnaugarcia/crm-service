@@ -25,6 +25,7 @@ public class CustomerResource {
 
     /**
      * {@code GET /customers} : get all customers.
+     *
      * @param pageable the pagination information
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
      */
@@ -36,6 +37,7 @@ public class CustomerResource {
 
     /**
      * {@code POST /customers} : Create a new customer.
+     *
      * @param customerRequest the request to create the customer
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new customer
      */
@@ -48,7 +50,8 @@ public class CustomerResource {
 
     /**
      * {@code PUT /customers} : Updates an existing customer.
-     * @param id the id of the customer to update
+     *
+     * @param id              the id of the customer to update
      * @param customerRequest the request to update the customer
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the updated customer
      */
@@ -56,5 +59,17 @@ public class CustomerResource {
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerRequest customerRequest) {
         log.info("REST request to update a customer");
         return ResponseEntity.ok(costumerService.updateCustomer(id, customerRequest));
+    }
+
+    /**
+     * {@code DELETE /customers} : Deletes an existing customer.
+     * @param id the id of the customer to delete
+     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
+     */
+    @DeleteMapping("/customers/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        log.info("REST request to delete a customer");
+        costumerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
     }
 }
