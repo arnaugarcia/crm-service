@@ -14,6 +14,7 @@ public class CustomerMapper {
                 .name(customer.name())
                 .surname(customer.surname())
                 .photoUrl(customer.photoUrl())
+                .lastModifiedBy(customer.getLastModifiedBy())
                 .build();
     }
 }

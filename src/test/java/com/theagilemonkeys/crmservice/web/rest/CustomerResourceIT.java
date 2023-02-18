@@ -158,7 +158,7 @@ class CustomerResourceIT {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser("user@localhost")
     void should_create_a_customer() throws Exception {
         when(cloudStorageService.uploadObject(any())).thenReturn(new URL(DEFAULT_PHOTO_URL));
 
@@ -170,6 +170,7 @@ class CustomerResourceIT {
                 .andExpect(jsonPath("$.name").value(customer.name()))
                 .andExpect(jsonPath("$.surname").value(customer.surname()))
                 .andExpect(jsonPath("$.photoUrl").value(customer.photoUrl()))
+                .andExpect(jsonPath("$.lastModifiedBy").value("user@localhost"))
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 

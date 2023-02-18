@@ -46,6 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customer.setCreatedBy(SecurityUtils.getCurrentUserEmail());
+        customer.setLastModifiedBy(SecurityUtils.getCurrentUserEmail());
 
         return customerMapper.toDTO(customerRepository.save(customer));
 
