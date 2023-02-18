@@ -1,5 +1,6 @@
 package com.theagilemonkeys.crmservice.web.rest.errors;
 
+import com.theagilemonkeys.crmservice.service.customer.exception.CustomerNotFound;
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
 import com.theagilemonkeys.crmservice.service.user.execption.OperationNotAllowed;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
@@ -100,6 +101,11 @@ public class ExceptionTranslator {
         return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
 
+    /**
+     * Handle S3Exception and return a 500 Internal Server Error
+     * @param ex the exception to handle
+     * @return the 500 Internal Server Error response
+     */
     @ExceptionHandler(S3Exception.class)
     public ResponseEntity<ErrorResponse> handleS3Exception(S3Exception ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -107,5 +113,19 @@ public class ExceptionTranslator {
                 .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Handle CustomerNotFound exception and return a 404 Not Found
+     * @param ex the exception to handle
+     * @return the 404 Not Found response
+     */
+    @ExceptionHandler(CustomerNotFound.class)
+    public ResponseEntity<ErrorResponse> handleCustomerNotFoundException(CustomerNotFound ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(NOT_FOUND.value())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, NOT_FOUND);
     }
 }

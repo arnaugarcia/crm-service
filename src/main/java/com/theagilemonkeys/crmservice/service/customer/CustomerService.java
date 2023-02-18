@@ -10,4 +10,6 @@ public interface CustomerService {
     List<CustomerDTO> findCustomers(Pageable pageable);
 
     CustomerDTO createCustomer(CustomerRequest customerRequest);
+
+    CustomerDTO updateCustomer(Long id, CustomerRequest customerRequest);
 }

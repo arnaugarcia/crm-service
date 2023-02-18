@@ -2,9 +2,9 @@ package com.theagilemonkeys.crmservice.service.customer.impl;
 
 import com.theagilemonkeys.crmservice.domain.Customer;
 import com.theagilemonkeys.crmservice.repository.CustomerRepository;
-import com.theagilemonkeys.crmservice.security.SecurityUtils;
 import com.theagilemonkeys.crmservice.service.customer.CustomerService;
 import com.theagilemonkeys.crmservice.service.customer.dto.CustomerDTO;
+import com.theagilemonkeys.crmservice.service.customer.exception.CustomerNotFound;
 import com.theagilemonkeys.crmservice.service.customer.mapper.CustomerMapper;
 import com.theagilemonkeys.crmservice.service.customer.request.CustomerRequest;
 import com.theagilemonkeys.crmservice.service.storage.CloudStorageService;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.theagilemonkeys.crmservice.security.SecurityUtils.getCurrentUserEmail;
 import static com.theagilemonkeys.crmservice.service.customer.request.PhotoFormat.from;
 
 @Service
@@ -45,11 +46,29 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setPhotoUrl(photoUrl);
         }
 
-        customer.setCreatedBy(SecurityUtils.getCurrentUserEmail());
-        customer.setLastModifiedBy(SecurityUtils.getCurrentUserEmail());
+        customer.setCreatedBy(getCurrentUserEmail());
+        customer.setLastModifiedBy(getCurrentUserEmail());
 
         return customerMapper.toDTO(customerRepository.save(customer));
 
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(Long id, CustomerRequest customerRequest) {
+        Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFound::new);
+
+        customer.setName(customerRequest.name());
+        customer.setSurname(customerRequest.surname());
+
+        if (customerRequest.photo() != null) {
+            cloudStorageService.removeObject(customer.photoUrl());
+            String photoUrl = uploadPhotoAndGetUrlFor(customerRequest);
+            customer.setPhotoUrl(photoUrl);
+        }
+
+        customer.setLastModifiedBy(getCurrentUserEmail());
+
+        return customerMapper.toDTO(customerRepository.save(customer));
     }
 
     private String uploadPhotoAndGetUrlFor(CustomerRequest customerRequest) {

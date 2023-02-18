@@ -50,6 +50,7 @@ class CustomerResourceIT {
     private CloudStorageService cloudStorageService;
 
     private CustomerRequest customerRequest;
+    private CustomerRequest updateCustomerRequest;
 
     private Customer customer;
 
@@ -58,12 +59,21 @@ class CustomerResourceIT {
         customerRepository.deleteAll();
         customer = createDefaultCustomer();
         customerRequest = createDefaultCustomerRequest();
+        updateCustomerRequest = createDefaultCustomerRequest();
     }
 
     private static CustomerRequest createDefaultCustomerRequest() {
         return CustomerRequest.builder()
                 .name(DEFAULT_NAME)
                 .surname(DEFAULT_SURNAME)
+                .photo(new CustomerPhotoRequest(DEFAULT_DATA, "image/png"))
+                .build();
+    }
+
+    private static CustomerRequest createUpdateCustomerRequest() {
+        return CustomerRequest.builder()
+                .name(UPDATED_NAME)
+                .surname(UPDATED_SURNAME)
                 .photo(new CustomerPhotoRequest(DEFAULT_DATA, "image/png"))
                 .build();
     }
@@ -243,6 +253,16 @@ class CustomerResourceIT {
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(customerRequest)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void should_not_update_a_customer_with_invalid_id() throws Exception {
+
+        restCustomerMockMvc.perform(put("/customers/{id}", -1)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(updateCustomerRequest)))
+                .andExpect(status().isNotFound());
     }
 
 }
