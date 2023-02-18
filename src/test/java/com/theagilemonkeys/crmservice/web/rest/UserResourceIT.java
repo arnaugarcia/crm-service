@@ -322,8 +322,8 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_ADMIN_EMAIL, roles = "ADMIN")
     void should_transform_to_admin() throws Exception {
-        User user = createDefaultUser();
         createDefaultAdmin();
+        User user = createDefaultUser();
 
         restUserMockMvc.perform(put("/users/{id}/admin", user.id())
                         .contentType(APPLICATION_JSON))
@@ -335,7 +335,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_ADMIN_EMAIL, roles = "ADMIN")
     void should_not_allow_an_admin_to_remove_super_admin_role() throws Exception {
-        User admin = createDefaultAdmin();
+        createDefaultAdmin();
         User superAdmin = createDefaultSuperAdmin();
 
         restUserMockMvc.perform(put("/users/{id}/admin", superAdmin.id())
