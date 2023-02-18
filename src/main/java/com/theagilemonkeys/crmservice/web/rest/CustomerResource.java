@@ -21,7 +21,7 @@ public class CustomerResource {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerResource.class);
 
-    private final CustomerService costumerService;
+    private final CustomerService customerService;
 
     /**
      * {@code GET /customers} : get all customers.
@@ -32,7 +32,7 @@ public class CustomerResource {
     @GetMapping("/customers")
     public ResponseEntity<List<CustomerDTO>> getCustomers(Pageable pageable) {
         log.info("REST request to get all customers");
-        return ResponseEntity.ok(costumerService.findCustomers(pageable));
+        return ResponseEntity.ok(customerService.findCustomers(pageable));
     }
 
     /**
@@ -44,7 +44,7 @@ public class CustomerResource {
     @PostMapping("/customers")
     public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
         log.info("REST request to create a customer");
-        return ResponseEntity.status(CREATED).body(costumerService.createCustomer(customerRequest));
+        return ResponseEntity.status(CREATED).body(customerService.createCustomer(customerRequest));
     }
 
 
@@ -58,7 +58,7 @@ public class CustomerResource {
     @PutMapping("/customers/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerRequest customerRequest) {
         log.info("REST request to update a customer");
-        return ResponseEntity.ok(costumerService.updateCustomer(id, customerRequest));
+        return ResponseEntity.ok(customerService.updateCustomer(id, customerRequest));
     }
 
     /**
@@ -69,7 +69,7 @@ public class CustomerResource {
     @DeleteMapping("/customers/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         log.info("REST request to delete a customer");
-        costumerService.deleteCustomer(id);
+        customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }
 }
