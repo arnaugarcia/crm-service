@@ -35,6 +35,8 @@ class UserResourceIT {
     private static final String UPDATED_SURNAME = "Doe2";
     private static final String DEFAULT_IMAGE_URL = "https://placehold.it/50x50";
     private static final String UPDATED_IMAGE_URL = "https://placehold.it/100x100";
+    private static final String DEFAULT_ADMIN_EMAIL = "admin@localhost";
+    private static final String DEFAULT_SUPER_ADMIN_EMAIL = "sa@localhost";
 
     @Autowired
     private UserRepository userRepository;
@@ -74,15 +76,33 @@ class UserResourceIT {
                 .build();
     }
 
-    private User createEmptyUser() {
+    private User createDefaultUser() {
+        return createDefaultUserByEmail(DEFAULT_EMAIL);
+    }
+
+    private User createDefaultUserByEmail(String email) {
         User user = new User();
-        user.setEmail(DEFAULT_EMAIL);
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
         user.setName(DEFAULT_NAME);
         user.setSurname(DEFAULT_SURNAME);
         user.setImageUrl(DEFAULT_IMAGE_URL);
         user.setCreatedBy(DEFAULT_USER);
+        user.addAuthority(new Authority(USER));
         return userRepository.save(user);
+    }
+
+    private User createDefaultAdmin() {
+        User adminUser = createDefaultUserByEmail(DEFAULT_ADMIN_EMAIL);
+        adminUser.addAuthority(new Authority(ADMIN));
+        return userRepository.save(adminUser);
+    }
+
+    private User createDefaultSuperAdmin() {
+        User adminUser = createDefaultUserByEmail(DEFAULT_SUPER_ADMIN_EMAIL);
+        adminUser.addAuthority(new Authority(ADMIN));
+        adminUser.addAuthority(new Authority(SUPER_ADMIN));
+        return userRepository.save(adminUser);
     }
 
     @Test
@@ -114,7 +134,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
     void should_return_list_with_one_user() throws Exception {
-        createEmptyUser();
+        createDefaultUser();
 
         restUserMockMvc.perform(get("/users")
                         .contentType(APPLICATION_JSON))
@@ -148,7 +168,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
     void should_not_update_an_admin() throws Exception {
-        User user = createEmptyUser();
+        User user = createDefaultUser();
 
         restUserMockMvc.perform(put("/users/{id}", user.id())
                         .contentType(APPLICATION_JSON)
@@ -163,7 +183,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL)
     void should_not_update_a_user_as_user() throws Exception {
-        User user = createEmptyUser();
+        User user = createDefaultUser();
 
         restUserMockMvc.perform(put("/users/{id}", user.id())
                         .contentType(APPLICATION_JSON)
@@ -174,7 +194,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
     void should_update_a_user() throws Exception {
-        User user = createEmptyUser();
+        User user = createDefaultUser();
 
         restUserMockMvc.perform(put("/users/{id}", user.id())
                         .contentType(APPLICATION_JSON)
@@ -190,7 +210,7 @@ class UserResourceIT {
     @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
     void should_not_create_a_user_with_existing_email() throws Exception {
 
-        User user = createEmptyUser();
+        User user = createDefaultUser();
 
         request = UserRequest.builder()
                 .email(user.email())
@@ -243,7 +263,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
     void should_delete_a_user() throws Exception {
-        User user = createEmptyUser();
+        User user = createDefaultUser();
 
         int databaseSizeBeforeDelete = userRepository.findAll().size();
 
@@ -258,7 +278,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL)
     void should_not_delete_a_user_as_user() throws Exception {
-        User user = createEmptyUser();
+        User user = createDefaultUser();
 
         restUserMockMvc.perform(delete("/users/{id}", user.id())
                         .contentType(APPLICATION_JSON))
@@ -277,7 +297,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL)
     void should_not_delete_an_admin_as_user() throws Exception {
-        User user = createEmptyUser();
+        User user = createDefaultUser();
         user.authorities().add(new Authority(ADMIN));
         userRepository.save(user);
 
@@ -289,7 +309,7 @@ class UserResourceIT {
     @Test
     @WithMockUser(username = DEFAULT_EMAIL)
     void should_not_delete_an_super_admin_as_user() throws Exception {
-        User user = createEmptyUser();
+        User user = createDefaultUser();
         user.authorities().add(new Authority(ADMIN));
         user.authorities().add(new Authority(SUPER_ADMIN));
         userRepository.save(user);
@@ -300,8 +320,26 @@ class UserResourceIT {
     }
 
     @Test
-    @WithMockUser(username = DEFAULT_EMAIL, roles = "ADMIN")
-    void should_toggle_a_user_to_admin() throws Exception {
-        User user = createEmptyUser();
+    @WithMockUser(username = DEFAULT_ADMIN_EMAIL, roles = "ADMIN")
+    void should_transform_to_admin() throws Exception {
+        User user = createDefaultUser();
+        createDefaultAdmin();
+
+        restUserMockMvc.perform(put("/users/{id}/admin", user.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        assertThat(userRepository.findOneByEmail(user.email()).get().authorities()).contains(new Authority(ADMIN));
+    }
+
+    @Test
+    @WithMockUser(username = DEFAULT_ADMIN_EMAIL, roles = "ADMIN")
+    void should_not_allow_an_admin_to_remove_super_admin_role() throws Exception {
+        User admin = createDefaultAdmin();
+        User superAdmin = createDefaultSuperAdmin();
+
+        restUserMockMvc.perform(put("/users/{id}/admin", superAdmin.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 }

@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.DEFAULT_USER;
-import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.USER;
+import static com.theagilemonkeys.crmservice.security.AuthoritiesConstants.*;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -95,10 +94,14 @@ public class UserServiceImpl implements UserService {
             throw new OperationNotAllowed();
         }
 
+        if (user.isSuperAdmin()) {
+            throw new ImmutableUser();
+        }
+
         if (user.isAdmin()) {
             user.removeAuthority(authorityRepository.findById(USER).orElseThrow());
         } else {
-            user.addAuthority(authorityRepository.findById(USER).orElseThrow());
+            user.addAuthority(authorityRepository.findById(ADMIN).orElseThrow());
         }
 
         return saveAndTransformToDTO(user);

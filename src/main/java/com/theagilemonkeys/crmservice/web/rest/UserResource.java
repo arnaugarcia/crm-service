@@ -83,7 +83,7 @@ public class UserResource {
     public ResponseEntity<UserDTO> toggleAdmin(@PathVariable Long id) {
         log.info("REST request to set a user as admin : {}", id);
         UserDTO result = userService.toggleAdmin(id);
-        return status(CREATED).body(result);
+        return ok(result);
     }
 
 }
