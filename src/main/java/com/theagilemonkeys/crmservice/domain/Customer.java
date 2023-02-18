@@ -55,6 +55,14 @@ public class Customer extends AbstractAuditingEntity implements Serializable {
         this.surname = surname;
     }
 
+    public String photoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,20 +72,12 @@ public class Customer extends AbstractAuditingEntity implements Serializable {
 
         if (!Objects.equals(id, customer.id)) return false;
         if (!Objects.equals(name, customer.name)) return false;
-        return Objects.equals(surname, customer.surname);
+        if (!Objects.equals(surname, customer.surname)) return false;
+        return Objects.equals(photoUrl, customer.photoUrl);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                '}';
+       return getClass().hashCode();
     }
 }
