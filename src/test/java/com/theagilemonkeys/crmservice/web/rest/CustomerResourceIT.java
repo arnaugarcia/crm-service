@@ -20,8 +20,7 @@ import java.net.URL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @IntegrationTest
@@ -195,6 +194,52 @@ class CustomerResourceIT {
                 .build();
 
         restCustomerMockMvc.perform(post("/customers")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(customerRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser("user@localhost")
+    void should_update_a_customer() throws Exception {
+        CustomerRequest customerRequest = CustomerRequest.builder()
+                .name(UPDATED_NAME)
+                .surname(UPDATED_SURNAME)
+                .build();
+
+        restCustomerMockMvc.perform(put("/customers/{id}", customer.id())
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(customerRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(customer.id()))
+                .andExpect(jsonPath("$.name").value(customerRequest.name()))
+                .andExpect(jsonPath("$.surname").value(customerRequest.surname()))
+                .andExpect(jsonPath("$.photoUrl").value(customer.photoUrl()))
+                .andExpect(jsonPath("$.lastModifiedBy").value("user@localhost"))
+                .andExpect(content().contentType(APPLICATION_JSON));
+    }
+
+    @Test
+    @WithMockUser
+    void should_not_update_a_customer_with_invalid_name() throws Exception {
+        CustomerRequest customerRequest = CustomerRequest.builder()
+                .surname(UPDATED_SURNAME)
+                .build();
+
+        restCustomerMockMvc.perform(put("/customers/{id}", customer.id())
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(customerRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void should_not_update_a_customer_with_invalid_surname() throws Exception {
+        CustomerRequest customerRequest = CustomerRequest.builder()
+                .name(UPDATED_NAME)
+                .build();
+
+        restCustomerMockMvc.perform(put("/customers/{id}", customer.id())
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(customerRequest)))
                 .andExpect(status().isBadRequest());
