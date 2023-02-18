@@ -33,7 +33,6 @@ spring:
     password: crm
 ```
 
-
 To start your application in the default profile, run:
 
 ```
@@ -53,3 +52,39 @@ To build the final war and optimize the crm application for production, run:
 ```
 ./mvnw clean package
 ```
+
+To ensure everything worked, run:
+
+```
+java -jar target/*.war
+```
+You should configure the database connection using the environment variables:
+
+```
+SPRING_DATASOURCE_URL
+SPRING_DATASOURCE_USERNAME
+SPRING_DATASOURCE_PASSWORD
+```
+
+## Testing
+
+To launch your application's tests, run:
+
+```
+./mvnw verify
+```
+
+## Docker
+
+To build the docker image, run:
+
+```
+mvn compile jib:dockerBuild
+```
+
+To run the docker image, run:
+
+```
+docker run -p 8080:8080 crm-service -d crm-service
+```
+
