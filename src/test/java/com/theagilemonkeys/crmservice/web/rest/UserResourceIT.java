@@ -332,6 +332,17 @@ class UserResourceIT {
     }
 
     @Test
+    @WithMockUser(username = DEFAULT_EMAIL)
+    void should_not_transform_to_admin_as_user() throws Exception {
+        createDefaultAdmin();
+        User user = createDefaultUser();
+
+        restUserMockMvc.perform(put("/users/{id}/admin", user.id())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     @WithMockUser(username = DEFAULT_ADMIN_EMAIL, roles = "ADMIN")
     void should_not_allow_an_admin_to_remove_super_admin_role() throws Exception {
         createDefaultAdmin();

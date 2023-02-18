@@ -7,7 +7,6 @@ import com.theagilemonkeys.crmservice.security.SecurityUtils;
 import com.theagilemonkeys.crmservice.service.user.UserService;
 import com.theagilemonkeys.crmservice.service.user.dto.UserDTO;
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
-import com.theagilemonkeys.crmservice.service.user.execption.OperationNotAllowed;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
 import com.theagilemonkeys.crmservice.service.user.execption.UserNotFound;
 import com.theagilemonkeys.crmservice.service.user.mapper.UserMapper;
@@ -88,9 +87,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO toggleAdmin(Long id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFound::new);
         User currentUser = userRepository.findOneByEmail(SecurityUtils.getCurrentUserEmail()).orElseThrow(UserNotFound::new);
-        if (!currentUser.isAdmin()) {
-            throw new OperationNotAllowed();
-        }
 
         if (user.isSuperAdmin()) {
             throw new ImmutableUser();
