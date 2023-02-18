@@ -7,6 +7,7 @@ import com.theagilemonkeys.crmservice.repository.CustomerRepository;
 import com.theagilemonkeys.crmservice.service.customer.request.CustomerRequest;
 import com.theagilemonkeys.crmservice.service.customer.request.CustomerRequest.CustomerPhotoRequest;
 import com.theagilemonkeys.crmservice.service.storage.CloudStorageService;
+import com.theagilemonkeys.crmservice.service.storage.execption.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.net.URL;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -277,6 +280,16 @@ class CustomerResourceIT {
     @WithMockUser
     void should_not_delete_a_customer_with_invalid_id() throws Exception {
         restCustomerMockMvc.perform(delete("/customers/{id}", -1)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void should_not_delete_a_customer() throws Exception {
+        doThrow(ObjectNotFoundException.class).when(cloudStorageService).removeObject(anyString());
+
+        restCustomerMockMvc.perform(delete("/customers/{id}", customer.id())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
