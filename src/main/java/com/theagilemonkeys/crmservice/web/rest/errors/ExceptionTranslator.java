@@ -9,10 +9,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 
 /**
@@ -90,12 +91,21 @@ public class ExceptionTranslator {
                         .field(fieldError.getField())
                         .message(fieldError.getDefaultMessage())
                         .build())
-                .collect(Collectors.toList());
+                .collect(toList());
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(BAD_REQUEST.value())
                 .message("Validation failed")
                 .fieldErrors(fieldErrors)
                 .build();
         return new ResponseEntity<>(errorResponse, BAD_REQUEST);
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<ErrorResponse> handleS3Exception(S3Exception ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
     }
 }
