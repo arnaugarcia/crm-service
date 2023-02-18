@@ -4,5 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record CustomerRequest(@NotNull String name, @NotNull String surname, byte[] photo) {
+public record CustomerRequest(@NotNull String name, @NotNull String surname, CustomerPhotoRequest photo) {
+    public record CustomerPhotoRequest(@NotNull byte[] data, @NotNull String photoContentType) {}
 }
