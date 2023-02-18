@@ -1,8 +1,8 @@
 package com.theagilemonkeys.crmservice.web.rest.errors;
 
 import com.theagilemonkeys.crmservice.service.customer.exception.CustomerNotFound;
+import com.theagilemonkeys.crmservice.service.storage.execption.ObjectNotFoundException;
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
-import com.theagilemonkeys.crmservice.service.user.execption.OperationNotAllowed;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
 import com.theagilemonkeys.crmservice.service.user.execption.UserNotFound;
 import org.springframework.http.ResponseEntity;
@@ -66,20 +66,6 @@ public class ExceptionTranslator {
     }
 
     /**
-     * Handle OperationNotAllowed exception and return a 403 Forbidden
-     * @param ex the exception to handle
-     * @return the 403 Forbidden response
-     */
-    @ExceptionHandler(OperationNotAllowed.class)
-    public ResponseEntity<ErrorResponse> handleOperationNotAllowedException(OperationNotAllowed ex) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(FORBIDDEN.value())
-                .message(ex.getMessage())
-                .build();
-        return new ResponseEntity<>(errorResponse, FORBIDDEN);
-    }
-
-    /**
      * Handle MethodArgumentNotValidException and return a 400 Bad Request with the list of field errors
      * @param ex the exception to handle
      * @return the 400 Bad Request response
@@ -128,4 +114,19 @@ public class ExceptionTranslator {
                 .build();
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
     }
+
+    /**
+     * Handle ObjectNotFoundException exception and return a 404 Not Found
+     * @param ex the exception to handle
+     * @return the 404 Not Found response
+     */
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleObjectNotFoundException(ObjectNotFoundException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(NOT_FOUND.value())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, NOT_FOUND);
+    }
+
 }
