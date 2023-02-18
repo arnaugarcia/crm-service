@@ -1,6 +1,5 @@
 package com.theagilemonkeys.crmservice.security;
 
-import com.theagilemonkeys.crmservice.security.exception.UserNotLogged;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +12,8 @@ import static java.util.Optional.ofNullable;
  */
 public final class SecurityUtils {
 
-    private SecurityUtils() {}
+    private SecurityUtils() {
+    }
 
     /**
      * Get the login of the current user.
@@ -22,7 +22,7 @@ public final class SecurityUtils {
      */
     public static String getCurrentUserEmail() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        return ofNullable(extractPrincipal(securityContext.getAuthentication())).orElseThrow(UserNotLogged::new);
+        return ofNullable(extractPrincipal(securityContext.getAuthentication())).orElseThrow();
     }
 
     private static String extractPrincipal(Authentication authentication) {
