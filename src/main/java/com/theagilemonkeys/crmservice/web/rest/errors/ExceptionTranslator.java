@@ -8,6 +8,7 @@ import com.theagilemonkeys.crmservice.service.user.execption.UserNotFound;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -65,6 +66,20 @@ public class ExceptionTranslator {
                 .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
+    }
+
+    /**
+     * Handle HttpMessageNotReadableException and return a 400 Bad Request
+     * @param ex the exception to handle
+     * @return the 400 Bad Request response
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(BAD_REQUEST.value())
+                .message("Malformed JSON request")
+                .build();
+        return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
 
     /**
