@@ -5,6 +5,7 @@ import com.theagilemonkeys.crmservice.service.storage.execption.ObjectNotFoundEx
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
 import com.theagilemonkeys.crmservice.service.user.execption.UserNotFound;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -63,6 +64,27 @@ public class ExceptionTranslator {
                 .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
+    }
+
+    /**
+     * Handle CustomerNotFound exception and return a 400 Bad Request
+     * @param ex the exception to handle
+     * @return the 400 Bad Request response
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        List<FieldError> fieldErrors = ex.getConstraintViolations().stream()
+                .map(constraintViolation -> FieldError.builder()
+                        .field(constraintViolation.getPropertyPath().toString())
+                        .message(constraintViolation.getMessage())
+                        .build())
+                .collect(toList());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(BAD_REQUEST.value())
+                .message("Validation failed")
+                .fieldErrors(fieldErrors)
+                .build();
+        return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
 
     /**
