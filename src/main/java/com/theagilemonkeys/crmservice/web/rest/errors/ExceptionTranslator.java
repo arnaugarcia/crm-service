@@ -6,6 +6,7 @@ import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
 import com.theagilemonkeys.crmservice.service.user.execption.UserAlreadyExists;
 import com.theagilemonkeys.crmservice.service.user.execption.UserNotFound;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -64,6 +65,20 @@ public class ExceptionTranslator {
                 .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
+    }
+
+    /**
+     * Handle PropertyReferenceException and return a 400 Bad Request
+     * @param ex the exception to handle
+     * @return the 400 Bad Request response
+     */
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ErrorResponse> handlePropertyReferenceException(PropertyReferenceException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(BAD_REQUEST.value())
+                .message("Invalid property for sorting: " + ex.getPropertyName())
+                .build();
+        return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
 
     /**
