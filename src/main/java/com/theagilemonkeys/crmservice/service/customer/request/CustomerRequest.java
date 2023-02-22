@@ -5,5 +5,5 @@ import lombok.Builder;
 
 @Builder
 public record CustomerRequest(@NotNull String name, @NotNull String surname, CustomerPhotoRequest photo) {
-    public record CustomerPhotoRequest(byte[] data, String photoContentType) {}
+    public record CustomerPhotoRequest(byte[] data, PhotoFormat photoContentType) {}
 }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.theagilemonkeys.crmservice.security.SecurityUtils.getCurrentUserEmail;
-import static com.theagilemonkeys.crmservice.service.customer.request.PhotoFormat.from;
 
 @Service
 @AllArgsConstructor
@@ -82,7 +81,7 @@ public class CustomerServiceImpl implements CustomerService {
         UploadObjectRequest uploadObjectRequest = UploadObjectRequest.builder()
                 .data(customerRequest.photo().data())
                 .fileName("customer-" + customerRequest.name() + "-" + customerRequest.surname())
-                .fileExtension(from(customerRequest.photo().photoContentType()).getExtension())
+                .fileExtension(customerRequest.photo().photoContentType().getExtension())
                 .build();
         return cloudStorageService.uploadObject(uploadObjectRequest).toString();
     }
