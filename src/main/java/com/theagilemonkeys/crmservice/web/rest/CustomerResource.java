@@ -30,7 +30,7 @@ public class CustomerResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of customers in body.
      */
     @GetMapping("/customers")
-    public ResponseEntity<List<CustomerDTO>> getCustomers(Pageable pageable) {
+    public ResponseEntity<List<CustomerDTO>> getCustomers(@RequestParam(required = false) Pageable pageable) {
         log.info("REST request to get all customers");
         return ResponseEntity.ok(customerService.findCustomers(pageable));
     }

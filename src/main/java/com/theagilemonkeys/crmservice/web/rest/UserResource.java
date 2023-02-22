@@ -29,7 +29,7 @@ public class UserResource {
      * @return the ResponseEntity with status 200 (OK) and the list of users in body
      */
     @GetMapping("/users")
-    public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
+    public ResponseEntity<List<UserDTO>> getAllUsers(@RequestParam(required = false) Pageable pageable) {
         log.info("REST request to get all Users");
         return ok(userService.findAll(pageable));
     }
