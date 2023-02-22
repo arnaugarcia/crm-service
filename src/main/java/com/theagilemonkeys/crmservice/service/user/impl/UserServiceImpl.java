@@ -3,7 +3,6 @@ package com.theagilemonkeys.crmservice.service.user.impl;
 import com.theagilemonkeys.crmservice.domain.User;
 import com.theagilemonkeys.crmservice.repository.AuthorityRepository;
 import com.theagilemonkeys.crmservice.repository.UserRepository;
-import com.theagilemonkeys.crmservice.security.SecurityUtils;
 import com.theagilemonkeys.crmservice.service.user.UserService;
 import com.theagilemonkeys.crmservice.service.user.dto.UserDTO;
 import com.theagilemonkeys.crmservice.service.user.execption.ImmutableUser;
@@ -86,14 +85,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO toggleAdmin(Long id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFound::new);
-        User currentUser = userRepository.findOneByEmail(SecurityUtils.getCurrentUserEmail()).orElseThrow(UserNotFound::new);
 
         if (user.isSuperAdmin()) {
             throw new ImmutableUser();
         }
 
         if (user.isAdmin()) {
-            user.removeAuthority(authorityRepository.findById(USER).orElseThrow());
+            user.removeAuthority(authorityRepository.findById(ADMIN).orElseThrow());
         } else {
             user.addAuthority(authorityRepository.findById(ADMIN).orElseThrow());
         }
