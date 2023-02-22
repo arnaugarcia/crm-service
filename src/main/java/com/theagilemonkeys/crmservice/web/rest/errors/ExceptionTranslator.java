@@ -77,7 +77,7 @@ public class ExceptionTranslator {
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(BAD_REQUEST.value())
-                .message("Malformed JSON request")
+                .message("Malformed JSON request for field: " + ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
