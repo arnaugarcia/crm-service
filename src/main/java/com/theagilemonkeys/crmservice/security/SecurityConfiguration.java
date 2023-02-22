@@ -29,11 +29,14 @@ public class SecurityConfiguration {
                 .sessionManagement()
                     .sessionCreationPolicy(STATELESS) // no session (JSESSION cookie) will be created or used by spring security
                 .and()
-                    .authorizeRequests(auth -> auth.requestMatchers("/users").hasAuthority(ADMIN)) // Deny access to users endpoints for non-admin users
-                    .authorizeRequests(auth -> auth.requestMatchers("/users/**").hasAuthority(ADMIN)) // Deny access to users endpoints for non-admin users
+                    .authorizeHttpRequests(auth -> {
+                        auth.requestMatchers("/swagger-ui/**").permitAll(); // Allow access to swagger-ui endpoints
+                        auth.requestMatchers("/users").hasAuthority(ADMIN); // Deny access to users endpoints for non-admin users
+                        auth.requestMatchers("/users/**").hasAuthority(ADMIN); // Deny access to users endpoints for non-admin users
+                    })
                 .httpBasic()
                 .and()
-                    .authorizeRequests()
+                    .authorizeHttpRequests()
                         .anyRequest().authenticated();
         return http.build();
     }
