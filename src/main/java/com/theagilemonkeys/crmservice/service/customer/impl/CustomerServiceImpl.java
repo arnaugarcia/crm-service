@@ -27,6 +27,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerDTO> findCustomers(Pageable pageable) {
+        if (pageable == null) {
+            pageable = Pageable.unpaged();
+        }
         return customerRepository.findAll(pageable)
                 .stream()
                 .map(customerMapper::toDTO)
